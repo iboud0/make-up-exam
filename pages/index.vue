@@ -24,7 +24,7 @@
       <!-- Welcome Section -->
       <main class="flex-grow flex items-center justify-center">
         <h1 class="text-4xl font-semibold text-gray-800">
-          Welcome to Your Project!
+          Welcome to Your Project Dep Test!
         </h1>
       </main>
     </div>
