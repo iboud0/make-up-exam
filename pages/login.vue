@@ -48,26 +48,36 @@
 </template>
   
 <script setup>
-    import { ref } from "vue";
-    import { useNuxtApp } from "#app";
-    import { signInWithEmailAndPassword } from "firebase/auth";
+import { ref } from "vue";
+import { useNuxtApp } from "#app";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { useRouter } from "vue-router";
 
-    const email = ref("");
-    const password = ref("");
-    const errorMessage = ref("");
-    const router = useRouter();
+const email = ref("");
+const password = ref("");
+const errorMessage = ref("");
+const router = useRouter();
 
-    // Access Firebase Auth via useNuxtApp
-    const { $auth } = useNuxtApp();
+// Access Firebase Auth via useNuxtApp
+const { $auth } = useNuxtApp();
 
-    const handleLogin = async () => {
-    try {
-        await signInWithEmailAndPassword($auth, email.value, password.value);
-        router.push("/welcome");
-    } catch (error) {
-        errorMessage.value = error.message;
+const handleLogin = async () => {
+  try {
+    // Validate the email domain
+    if (!email.value.endsWith("@um6p.ma")) {
+      errorMessage.value = "Login is restricted to UM6P email addresses.";
+      return;
     }
-    };
+
+    // Attempt to sign in with Firebase
+    await signInWithEmailAndPassword($auth, email.value, password.value);
+
+    router.push("/welcome"); // Redirect to welcome page on successful login
+  } catch (error) {
+    errorMessage.value = error.message; // Display error if login fails
+  }
+};
 </script>
+
 
   

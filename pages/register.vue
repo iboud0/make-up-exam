@@ -60,35 +60,42 @@
 </template>
   
 <script setup>
-  import { ref } from "vue";
-  import { useNuxtApp } from "#app";
-  import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-  import { useRouter } from "vue-router";
-  
-  const username = ref(""); // New username field
-  const email = ref("");
-  const password = ref("");
-  const errorMessage = ref("");
-  const router = useRouter();
-  
-  // Access Firebase Auth via useNuxtApp
-  const { $auth } = useNuxtApp();
-  
-  const handleRegister = async () => {
-    try {
-      // Use Firebase to create a new user
-      const userCredential = await createUserWithEmailAndPassword($auth, email.value, password.value);
-      const user = userCredential.user;
-  
-      // Save username to user's profile
-      await updateProfile(user, {
-        displayName: username.value,
-      });
-  
-      router.push("/welcome"); // Redirect to welcome page on successful registration
-    } catch (error) {
-      errorMessage.value = error.message; // Display error if registration fails
+import { ref } from "vue";
+import { useNuxtApp } from "#app";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { useRouter } from "vue-router";
+
+const username = ref(""); // New username field
+const email = ref("");
+const password = ref("");
+const errorMessage = ref("");
+const router = useRouter();
+
+// Access Firebase Auth via useNuxtApp
+const { $auth } = useNuxtApp();
+
+const handleRegister = async () => {
+  try {
+    // Validate the email domain
+    if (!email.value.endsWith("@um6p.ma")) {
+      errorMessage.value = "Registration is restricted to UM6P email addresses.";
+      return;
     }
-  };
+
+    // Use Firebase to create a new user
+    const userCredential = await createUserWithEmailAndPassword($auth, email.value, password.value);
+    const user = userCredential.user;
+
+    // Save username to user's profile
+    await updateProfile(user, {
+      displayName: username.value,
+    });
+
+    router.push("/welcome"); // Redirect to welcome page on successful registration
+  } catch (error) {
+    errorMessage.value = error.message; // Display error if registration fails
+  }
+};
 </script>
+
   
